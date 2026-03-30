@@ -14,6 +14,16 @@ module myworld::social {
     }
 
     // =========================
+    // Post Object
+    // =========================
+    struct Post has key {
+        id: UID,
+        owner: address,
+        content: vector<u8>,
+        is_deleted: bool,
+    }
+
+    // =========================
     // Create Profile
     // =========================
     public entry fun create_profile(username: vector<u8>, ctx: &mut TxContext) {
@@ -26,5 +36,21 @@ module myworld::social {
         };
 
         transfer::transfer(profile, sender);
+    }
+
+    // =========================
+    // Create Post
+    // =========================
+    public entry fun create_post(content: vector<u8>, ctx: &mut TxContext) {
+        let sender = tx_context::sender(ctx);
+
+        let post = Post {
+            id: object::new(ctx),
+            owner: sender,
+            content,
+            is_deleted: false,
+        };
+
+        transfer::transfer(post, sender);
     }
 }
