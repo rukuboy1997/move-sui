@@ -53,4 +53,31 @@ module myworld::social {
 
         transfer::transfer(post, sender);
     }
+
+    // =========================
+    // Update Post
+    // =========================
+    public entry fun update_post(post: &mut Post, new_content: vector<u8>, ctx: &TxContext) {
+        let sender = tx_context::sender(ctx);
+
+        // Only owner can update
+        assert!(post.owner == sender, 0);
+
+        // Cannot edit deleted post
+        assert!(!post.is_deleted, 1);
+
+        post.content = new_content;
+    }
+
+    // =========================
+    // Soft Delete Post
+    // =========================
+    public entry fun delete_post(post: &mut Post, ctx: &TxContext) {
+        let sender = tx_context::sender(ctx);
+
+        // Only owner can delete
+        assert!(post.owner == sender, 0);
+
+        post.is_deleted = true;
+    }
 }
