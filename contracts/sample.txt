@@ -1,0 +1,5 @@
+Hello from MyWorld on Walrus! 🚀
+
+This post is stored on Walrus decentralized storage and linked to the Sui blockchain.
+Package: 0x0232fe5b5497cec87f0ad865a7058ae1cc716bba553d66e0262cd59bbb75fc0c
+Network: Sui Testnet

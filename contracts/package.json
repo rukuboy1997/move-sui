@@ -1,0 +1,20 @@
+{
+  "name": "myworld-walrus",
+  "version": "1.0.0",
+  "description": "MyWorld social contract connected to Walrus decentralized storage",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "upload": "node walrus.js",
+    "read": "node read.js",
+    "deploy": "bash run_deploy.sh"
+  },
+  "keywords": ["sui", "walrus", "move", "web3"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@mysten/sui": "^2.13.0",
+    "@mysten/walrus": "^1.1.0",
+    "@types/node": "^22.13.11"
+  }
+}
