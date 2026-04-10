@@ -57,7 +57,7 @@ async function uploadToWalrus(content) {
 }
 
 // ─── STEP 2: Link Blob ID to Sui contract ────────────────────────────────────
-async function linkToSui(blobId) {
+async function linkToSui(blobId, title) {
   console.log("\n🔗 Linking blob to Sui contract...");
 
   const keypair = Ed25519Keypair.deriveKeypair(MNEMONIC);
@@ -65,12 +65,15 @@ async function linkToSui(blobId) {
 
   const tx = new Transaction();
 
-  // Pass the Walrus blob ID as the post content (vector<u8>)
-  const contentBytes = Array.from(Buffer.from(blobId, "utf8"));
+  const blobBytes  = Array.from(Buffer.from(blobId, "utf8"));
+  const titleBytes = Array.from(Buffer.from(title, "utf8"));
 
   tx.moveCall({
     target: `${PACKAGE_ID}::social::create_post`,
-    arguments: [tx.pure.vector("u8", contentBytes)],
+    arguments: [
+      tx.pure.vector("u8", blobBytes),
+      tx.pure.vector("u8", titleBytes),
+    ],
   });
 
   const result = await client.signAndExecuteTransaction({
@@ -112,7 +115,8 @@ async function main() {
   console.log("   Cost:           ", walrusResult.cost, "MIST");
 
   // 2. Link to Sui contract
-  const suiResult = await linkToSui(walrusResult.blobId);
+  const title = "My First Walrus Post 🚀";
+  const suiResult = await linkToSui(walrusResult.blobId, title);
 
   console.log("\n✅ Linked to Sui Contract!");
   console.log("   Transaction:    ", suiResult.digest);
