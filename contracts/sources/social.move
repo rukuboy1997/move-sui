@@ -14,12 +14,14 @@ module myworld::social {
     }
 
     // =========================
-    // Post Object
+    // Post Object (UPGRADED)
     // =========================
     struct Post has key {
         id: UID,
         owner: address,
-        content: vector<u8>,
+        blob_id: vector<u8>,   // Walrus reference
+        title: vector<u8>,     // NEW
+        created_at: u64,       // NEW
         is_deleted: bool,
     }
 
@@ -39,15 +41,21 @@ module myworld::social {
     }
 
     // =========================
-    // Create Post
+    // Create Post (UPDATED)
     // =========================
-    public entry fun create_post(content: vector<u8>, ctx: &mut TxContext) {
+    public entry fun create_post(
+        blob_id: vector<u8>,
+        title: vector<u8>,
+        ctx: &mut TxContext
+    ) {
         let sender = tx_context::sender(ctx);
 
         let post = Post {
             id: object::new(ctx),
             owner: sender,
-            content,
+            blob_id,
+            title,
+            created_at: tx_context::epoch(ctx),
             is_deleted: false,
         };
 
@@ -57,16 +65,19 @@ module myworld::social {
     // =========================
     // Update Post
     // =========================
-    public entry fun update_post(post: &mut Post, new_content: vector<u8>, ctx: &TxContext) {
+    public entry fun update_post(
+        post: &mut Post,
+        new_blob_id: vector<u8>,
+        new_title: vector<u8>,
+        ctx: &TxContext
+    ) {
         let sender = tx_context::sender(ctx);
 
-        // Only owner can update
         assert!(post.owner == sender, 0);
-
-        // Cannot edit deleted post
         assert!(!post.is_deleted, 1);
 
-        post.content = new_content;
+        post.blob_id = new_blob_id;
+        post.title = new_title;
     }
 
     // =========================
@@ -75,7 +86,6 @@ module myworld::social {
     public entry fun delete_post(post: &mut Post, ctx: &TxContext) {
         let sender = tx_context::sender(ctx);
 
-        // Only owner can delete
         assert!(post.owner == sender, 0);
 
         post.is_deleted = true;
